@@ -24,8 +24,17 @@ void setup() {
 
 void draw() {
   background(0);
+  camera(eyeX, eyeY, eyeZ, focusX, focusY, focusZ, tiltX, tiltY, tiltZ);
   drawFloor();
+  drawFocalPoint(); 
   controlCamera();
+}
+
+void drawFocalPoint() {
+  pushMatrix(); 
+  translate(focusX, focusY, focusZ); 
+  sphere(5); //lwk ts a crosshair gng
+  popMatrix(); 
 }
 
 void drawFloor() {
@@ -37,7 +46,6 @@ void drawFloor() {
 }
 
 void controlCamera() {
-  camera(eyeX, eyeY, eyeZ, focusX, focusY, focusZ, tiltX, tiltY, tiltZ);
   if (wKey) eyeZ = eyeZ + 10; 
   if (sKey) eyeZ = eyeZ - 10; 
   if (aKey) eyeX = eyeX  + 10; 
@@ -47,7 +55,7 @@ void controlCamera() {
   
   focusX = eyeX; 
   focusY = eyeY; 
-  focusZ = eyeZ+10; 
+  focusZ = eyeZ+500; 
 }
 
 void keyPressed() {
@@ -65,5 +73,5 @@ void keyReleased() {
   if (key == 'S' | key == 's') sKey = false;
   if (key == 'D' | key == 'd') dKey = false;
    if (key == ' ') spaceKey = false; 
-  if (keyCodes == SHIFT) shiftKey = false; 
+  if (keyCode == SHIFT) shiftKey = false; 
 }
