@@ -6,39 +6,42 @@
 
 boolean wKey, aKey, sKey, dKey, spaceKey, shiftKey;
 float eyeX, eyeY, eyeZ, focusX, focusY, focusZ, tiltX, tiltY, tiltZ; //eye = keyboard, focus = mouse, tilt = irrelevant
+float leftRightHeadAngle, upDownHeadAngle;
 
 void setup() {
   size(800, 800, P3D);
   textureMode(NORMAL);
   wKey = aKey = sKey = dKey = false;
-  eyeX = width/2; 
+  eyeX = width/2;
   eyeY = height/2;
-  eyeZ = 0; 
-  focusX = width/2; 
-  focusY = height/2; 
-  focusZ = 10; 
-  tiltX = 0; 
-  tiltY = 1; 
-  tiltZ = 0; 
+  eyeZ = 0;
+  focusX = width/2;
+  focusY = height/2;
+  focusZ = 10;
+  tiltX = 0;
+  tiltY = 1;
+  tiltZ = 0;
+  leftRightHeadAngle = radians(90);
+  noCursor();
 }
 
 void draw() {
   background(0);
   camera(eyeX, eyeY, eyeZ, focusX, focusY, focusZ, tiltX, tiltY, tiltZ);
   drawFloor();
-  drawFocalPoint(); 
+  drawFocalPoint();
   controlCamera();
 }
 
 void drawFocalPoint() {
-  pushMatrix(); 
-  translate(focusX, focusY, focusZ); 
+  pushMatrix();
+  translate(focusX, focusY, focusZ);
   sphere(5); //lwk ts a crosshair gng
-  popMatrix(); 
+  popMatrix();
 }
 
 void drawFloor() {
-  stroke(255); 
+  stroke(255);
   for (int x = -2000; x <= 2000; x = x + 100) {
     line(x, height, -2000, x, height, 2000);
     line(-2000, height, x, 2000, height, x);
@@ -46,16 +49,34 @@ void drawFloor() {
 }
 
 void controlCamera() {
-  if (wKey) eyeZ = eyeZ + 10; 
-  if (sKey) eyeZ = eyeZ - 10; 
-  if (aKey) eyeX = eyeX  + 10; 
-  if (dKey) eyeX = eyeX - 10; 
-  if (spaceKey) eyeY = eyeY -10; 
-  if (shiftKey) eyeY = eyeY + 10; 
-  
-  focusX = eyeX; 
-  focusY = eyeY; 
-  focusZ = eyeZ+500; 
+  if (wKey) {
+    eyeZ = eyeZ + sin(leftRightHeadAngle)*10;
+    eyeX = eyeX + cos(leftRightHeadAngle)*10;
+  }
+  if (sKey) {
+    eyeZ = eyeZ - sin(leftRightHeadAngle)*10;
+    eyeX = eyeX - cos(leftRightHeadAngle)*10;
+  }
+  if (aKey) {
+    eyeZ = eyeZ - sin(leftRightHeadAngle+radians(90))*10;
+    eyeX = eyeX - cos(leftRightHeadAngle+radians(90))*10;
+  }
+  if (dKey) {
+    eyeZ = eyeZ + sin(leftRightHeadAngle+radians(90))*10;
+    eyeX = eyeX + cos(leftRightHeadAngle+radians(90))*10;
+  }
+  if (spaceKey) eyeY = eyeY -10;
+  if (shiftKey) eyeY = eyeY + 10;
+
+  leftRightHeadAngle = leftRightHeadAngle + (mouseX - pmouseX)*0.01;
+  upDownHeadAngle = upDownHeadAngle + (mouseY - pmouseY)*0.01;
+  if (upDownHeadAngle > PI/2.5) upDownHeadAngle = PI/2.5;
+  if (upDownHeadAngle < -PI/2.5) upDownHeadAngle = -PI/2.5;
+
+  focusX = eyeX+cos(leftRightHeadAngle)*500;
+  focusZ = eyeZ+sin(leftRightHeadAngle)*500;
+
+  focusY = eyeY + tan(upDownHeadAngle)*500;
 }
 
 void keyPressed() {
@@ -63,7 +84,7 @@ void keyPressed() {
   if (key == 'A' | key == 'a') aKey = true;
   if (key == 'S' | key == 's') sKey = true;
   if (key == 'D' | key == 'd') dKey = true;
-  if (key == ' ') spaceKey = true; 
+  if (key == ' ') spaceKey = true;
   if (keyCode == SHIFT) shiftKey = true;
 }
 
@@ -72,6 +93,6 @@ void keyReleased() {
   if (key == 'A' | key == 'a') aKey = false;
   if (key == 'S' | key == 's') sKey = false;
   if (key == 'D' | key == 'd') dKey = false;
-   if (key == ' ') spaceKey = false; 
-  if (keyCode == SHIFT) shiftKey = false; 
+  if (key == ' ') spaceKey = false;
+  if (keyCode == SHIFT) shiftKey = false;
 }
