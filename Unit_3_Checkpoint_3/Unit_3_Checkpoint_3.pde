@@ -4,12 +4,24 @@
 //Unit 3 Checkpoint #3
 //3D Enviornmental Sketch
 
+import java.awt.Robot;
+
+Robot rbt;
+
+//color pallette
+color black = #000000;
+color white = #ffffff;
+
+//map variable
+int gridSize;
+PImage map;
+
 boolean wKey, aKey, sKey, dKey, spaceKey, shiftKey;
 float eyeX, eyeY, eyeZ, focusX, focusY, focusZ, tiltX, tiltY, tiltZ; //eye = keyboard, focus = mouse, tilt = irrelevant
 float leftRightHeadAngle, upDownHeadAngle;
 
 void setup() {
-  size(800, 800, P3D);
+  fullScreen(P3D);
   textureMode(NORMAL);
   wKey = aKey = sKey = dKey = false;
   eyeX = width/2;
@@ -23,6 +35,16 @@ void setup() {
   tiltZ = 0;
   leftRightHeadAngle = radians(90);
   noCursor();
+
+  try {
+    rbt = new Robot();
+  }
+  catch(Exception e) {
+    e.printStackTrace();
+  }
+
+  map= loadImage("map.png");
+  gridSize = 100;
 }
 
 void draw() {
@@ -31,6 +53,23 @@ void draw() {
   drawFloor();
   drawFocalPoint();
   controlCamera();
+  drawMap();
+}
+
+void drawMap() {
+  for (int x = 0; x < map.width; x++) {
+    for (int y = 0; y < map.height; y++) {
+      color c = map.get(x, y); 
+      if (c != white) {
+        pushMatrix(); 
+        fill(c); 
+        stroke(100); 
+        translate(x*gridSize-5000, height, y*gridSize-5000); 
+        box(gridSize, 50, gridSize); 
+        popMatrix(); 
+      }
+    }
+  }
 }
 
 void drawFocalPoint() {
@@ -42,9 +81,9 @@ void drawFocalPoint() {
 
 void drawFloor() {
   stroke(255);
-  for (int x = -2000; x <= 2000; x = x + 100) {
-    line(x, height, -2000, x, height, 2000);
-    line(-2000, height, x, 2000, height, x);
+  for (int x = -5000; x <= 5000; x = x + 100) {
+    line(x, height, -5000, x, height, 5000);
+    line(-5000, height, x, 5000, height, x);
   }
 }
 
@@ -75,8 +114,10 @@ void controlCamera() {
 
   focusX = eyeX+cos(leftRightHeadAngle)*500;
   focusZ = eyeZ+sin(leftRightHeadAngle)*500;
-
   focusY = eyeY + tan(upDownHeadAngle)*500;
+
+  if (mouseX > width-2) rbt.mouseMove(3, mouseY);
+  else if (mouseX < 2) rbt.mouseMove(width-3, mouseY);
 }
 
 void keyPressed() {
