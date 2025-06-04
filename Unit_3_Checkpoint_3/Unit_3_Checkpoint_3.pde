@@ -65,7 +65,7 @@ void drawMap() {
         fill(c); 
         stroke(100); 
         translate(x*gridSize-5000, height, y*gridSize-5000); 
-        box(gridSize, 50, gridSize); 
+        box(gridSize, height/2, gridSize); 
         popMatrix(); 
       }
     }
