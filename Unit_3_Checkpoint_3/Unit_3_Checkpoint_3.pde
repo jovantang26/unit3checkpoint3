@@ -8,9 +8,13 @@ import java.awt.Robot;
 
 Robot rbt;
 
+//texture
+PImage stoneBrick;
+
 //color pallette
 color black = #000000;
 color white = #ffffff;
+color red = #ff0000; 
 
 //map variable
 int gridSize;
@@ -44,13 +48,18 @@ void setup() {
   }
 
   map= loadImage("map.png");
+  stoneBrick = loadImage("Stone_Bricks.png");
   gridSize = 100;
+  
+  stroke(red); 
+  line(0, 0, map.width, map.height); 
 }
 
 void draw() {
   background(0);
   camera(eyeX, eyeY, eyeZ, focusX, focusY, focusZ, tiltX, tiltY, tiltZ);
-  drawFloor();
+  drawFloor(-5000, 5000, height, gridSize);
+  drawFloor(-5000, 5000, height-gridSize*3, gridSize);
   drawFocalPoint();
   controlCamera();
   drawMap();
@@ -59,14 +68,9 @@ void draw() {
 void drawMap() {
   for (int x = 0; x < map.width; x++) {
     for (int y = 0; y < map.height; y++) {
-      color c = map.get(x, y); 
+      color c = map.get(x, y);
       if (c != white) {
-        pushMatrix(); 
-        fill(c); 
-        stroke(100); 
-        translate(x*gridSize-5000, height, y*gridSize-5000); 
-        box(gridSize, height/2, gridSize); 
-        popMatrix(); 
+        texturedCube(x*gridSize, height, y*gridSize, stoneBrick, gridSize);
       }
     }
   }
@@ -79,7 +83,7 @@ void drawFocalPoint() {
   popMatrix();
 }
 
-void drawFloor() {
+void drawFloor(int start, int end, int level, int gap) {
   stroke(255);
   for (int x = -5000; x <= 5000; x = x + 100) {
     line(x, height, -5000, x, height, 5000);
