@@ -12,6 +12,8 @@ Robot rbt;
 PImage stoneBrick;
 PImage oakTop;
 PImage oakSide;
+PImage dirtBlock;
+
 
 //color pallette
 color black = #000000;
@@ -31,7 +33,7 @@ void setup() {
   textureMode(NORMAL);
   wKey = aKey = sKey = dKey = false;
   eyeX = width/2;
-  eyeY = 0;
+  eyeY = -300;
   eyeZ = 0;
   focusX = width/2;
   focusY = height/2;
@@ -53,15 +55,15 @@ void setup() {
   stoneBrick = loadImage("Stone_Bricks.png");
   oakTop = loadImage("Oak_Log_Top.png");
   oakSide = loadImage("Oak_Log_Side.png");
+  dirtBlock = loadImage("Dirt_(texture)_JE2_BE2.png");
 
   gridSize = 100;
 }
 
 void draw() {
   background(0);
+  pointLight(255, 255, 255, eyeX, eyeY, eyeZ); 
   camera(eyeX, eyeY, eyeZ, focusX, focusY, focusZ, tiltX, tiltY, tiltZ);
-  drawFloor(-5000, 5000, -height, gridSize);
-  drawFloor(-5000, 5000, 0, gridSize);
   drawFocalPoint();
   controlCamera();
   drawMap();
@@ -73,14 +75,17 @@ void drawMap() {
     for (int y = 0; y < map.height; y++) {
       color c = map.get(x, y);
       if (c != white && c != black) {
-        int i = 1;
-        while (i < 3) {
+        for (int i = 1; i < 3; i++) {
           texturedCube(x*gridSize-5000, -gridSize*i, y*gridSize-5000, stoneBrick, gridSize);
-          i++;
         }
       }
       if (c == black) {
-        texturedCube(x*gridSize-5000, 10, y*gridSize-5000, oakTop, oakTop, oakSide, gridSize);
+        for (int i = 1; i < 6; i++) {
+          texturedCube(x*gridSize-5000, -gridSize*i, y*gridSize-5000, oakTop, oakTop, oakSide, gridSize);
+        }
+      }
+       if (c == white) {
+        texturedCube(x*gridSize-5000, 0, y*gridSize-5000, dirtBlock, gridSize);
       }
     }
   }
@@ -93,33 +98,25 @@ void drawFocalPoint() {
   popMatrix();
 }
 
-void drawFloor(int start, int end, int level, int gap) {
-  stroke(255);
-  for (int x = -5000; x <= 5000; x = x + 100) {
-    line(x, level, -5000, x, level, 5000);
-    line(-5000, level, x, 5000, level, x);
-  }
-}
-
 void controlCamera() {
   if (wKey) {
-    eyeZ = eyeZ + sin(leftRightHeadAngle)*10;
-    eyeX = eyeX + cos(leftRightHeadAngle)*10;
+    eyeZ = eyeZ + sin(leftRightHeadAngle)*20;
+    eyeX = eyeX + cos(leftRightHeadAngle)*20;
   }
   if (sKey) {
-    eyeZ = eyeZ - sin(leftRightHeadAngle)*10;
-    eyeX = eyeX - cos(leftRightHeadAngle)*10;
+    eyeZ = eyeZ - sin(leftRightHeadAngle)*20;
+    eyeX = eyeX - cos(leftRightHeadAngle)*20;
   }
   if (aKey) {
-    eyeZ = eyeZ - sin(leftRightHeadAngle+radians(90))*10;
-    eyeX = eyeX - cos(leftRightHeadAngle+radians(90))*10;
+    eyeZ = eyeZ - sin(leftRightHeadAngle+radians(90))*20;
+    eyeX = eyeX - cos(leftRightHeadAngle+radians(90))*20;
   }
   if (dKey) {
-    eyeZ = eyeZ + sin(leftRightHeadAngle+radians(90))*10;
-    eyeX = eyeX + cos(leftRightHeadAngle+radians(90))*10;
+    eyeZ = eyeZ + sin(leftRightHeadAngle+radians(90))*20;
+    eyeX = eyeX + cos(leftRightHeadAngle+radians(90))*20;
   }
-  if (spaceKey) eyeY = eyeY -10;
-  if (shiftKey) eyeY = eyeY + 10;
+  if (spaceKey) eyeY = eyeY -20;
+  if (shiftKey) eyeY = eyeY + 20;
 
   leftRightHeadAngle = leftRightHeadAngle + (mouseX - pmouseX)*0.01;
   upDownHeadAngle = upDownHeadAngle + (mouseY - pmouseY)*0.01;
