@@ -62,32 +62,51 @@ void setup() {
 
 void draw() {
   background(0);
-  pointLight(255, 255, 255, eyeX, eyeY, eyeZ); 
+  pointLight(255, 255, 255, eyeX, eyeY, eyeZ);
   camera(eyeX, eyeY, eyeZ, focusX, focusY, focusZ, tiltX, tiltY, tiltZ);
   drawFocalPoint();
   controlCamera();
   drawMap();
-  println(eyeX, eyeY, eyeZ);
 }
 
 void drawMap() {
   for (int x = 0; x < map.width; x++) {
     for (int y = 0; y < map.height; y++) {
       color c = map.get(x, y);
+
+      //float fwdx = eyeX+cos(leftRightHeadAngle)*200;
+      //float fwdz = eyeZ+sin(leftRightHeadAngle)*200;
+      //float fwdy = eyeY;
+
+      //int mapx = int(fwdx+5000)/gridSize;
+      //int mapy = int(fwdz+5000)/gridSize;
+
+
+      //boolean drawing = true;
+
+      //if (mapx == x && mapy == y) {
+      //   print("O");
+      //   drawing = false;
+      //}
+
       if (c != white && c != black) {
         for (int i = 1; i < 3; i++) {
           texturedCube(x*gridSize-5000, -gridSize*i, y*gridSize-5000, stoneBrick, gridSize);
         }
+        //if (drawing) print(".");
       }
       if (c == black) {
         for (int i = 1; i < 6; i++) {
           texturedCube(x*gridSize-5000, -gridSize*i, y*gridSize-5000, oakTop, oakTop, oakSide, gridSize);
         }
+        //if (drawing) print("#");
       }
-       if (c == white) {
+      if (c == white) {
         texturedCube(x*gridSize-5000, 0, y*gridSize-5000, dirtBlock, gridSize);
+        //if (drawing) print(" ");
       }
     }
+    //println();
   }
 }
 
@@ -99,7 +118,7 @@ void drawFocalPoint() {
 }
 
 void controlCamera() {
-  if (wKey) {
+  if (wKey && canMoveForward() ) {
     eyeZ = eyeZ + sin(leftRightHeadAngle)*20;
     eyeX = eyeX + cos(leftRightHeadAngle)*20;
   }
@@ -129,6 +148,24 @@ void controlCamera() {
 
   if (mouseX > width-2) rbt.mouseMove(3, mouseY);
   else if (mouseX < 2) rbt.mouseMove(width-3, mouseY);
+}
+
+boolean canMoveForward() {
+  float fwdx, fwdy, fwdz;
+  int mapx, mapy;
+
+  fwdx = eyeX+cos(leftRightHeadAngle)*200;
+  fwdz = eyeZ+sin(leftRightHeadAngle)*200;
+  fwdy = eyeY;
+
+  mapx = int(fwdx+5000)/gridSize;
+  mapy = int(fwdz+5000)/gridSize;
+
+  if (map.get(mapx, mapy) == black) {
+    return false;
+  } else {
+    return true;
+  }
 }
 
 void keyPressed() {
