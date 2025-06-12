@@ -74,39 +74,20 @@ void drawMap() {
     for (int y = 0; y < map.height; y++) {
       color c = map.get(x, y);
 
-      //float fwdx = eyeX+cos(leftRightHeadAngle)*200;
-      //float fwdz = eyeZ+sin(leftRightHeadAngle)*200;
-      //float fwdy = eyeY;
-
-      //int mapx = int(fwdx+5000)/gridSize;
-      //int mapy = int(fwdz+5000)/gridSize;
-
-
-      //boolean drawing = true;
-
-      //if (mapx == x && mapy == y) {
-      //   print("O");
-      //   drawing = false;
-      //}
-
       if (c != white && c != black) {
         for (int i = 1; i < 3; i++) {
           texturedCube(x*gridSize-5000, -gridSize*i, y*gridSize-5000, stoneBrick, gridSize);
         }
-        //if (drawing) print(".");
       }
       if (c == black) {
         for (int i = 1; i < 6; i++) {
           texturedCube(x*gridSize-5000, -gridSize*i, y*gridSize-5000, oakTop, oakTop, oakSide, gridSize);
         }
-        //if (drawing) print("#");
       }
       if (c == white) {
         texturedCube(x*gridSize-5000, 0, y*gridSize-5000, dirtBlock, gridSize);
-        //if (drawing) print(" ");
       }
     }
-    //println();
   }
 }
 
@@ -122,15 +103,15 @@ void controlCamera() {
     eyeZ = eyeZ + sin(leftRightHeadAngle)*20;
     eyeX = eyeX + cos(leftRightHeadAngle)*20;
   }
-  if (sKey) {
+  if (sKey && canMoveBack()) {
     eyeZ = eyeZ - sin(leftRightHeadAngle)*20;
     eyeX = eyeX - cos(leftRightHeadAngle)*20;
   }
-  if (aKey) {
+  if (aKey && canMoveLeft()) {
     eyeZ = eyeZ - sin(leftRightHeadAngle+radians(90))*20;
     eyeX = eyeX - cos(leftRightHeadAngle+radians(90))*20;
   }
-  if (dKey) {
+  if (dKey && canMoveRight()) {
     eyeZ = eyeZ + sin(leftRightHeadAngle+radians(90))*20;
     eyeX = eyeX + cos(leftRightHeadAngle+radians(90))*20;
   }
@@ -160,6 +141,60 @@ boolean canMoveForward() {
 
   mapx = int(fwdx+5000)/gridSize;
   mapy = int(fwdz+5000)/gridSize;
+
+  if (map.get(mapx, mapy) == black) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+boolean canMoveBack() {
+  float Backx, Backy, Backz;
+  int mapx, mapy;
+
+  Backx = eyeX-cos(leftRightHeadAngle)*200;
+  Backz = eyeZ-sin(leftRightHeadAngle)*200;
+  Backy = eyeY;
+
+  mapx = int(Backx+5000)/gridSize;
+  mapy = int(Backz+5000)/gridSize;
+
+  if (map.get(mapx, mapy) == black) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+boolean canMoveLeft() {
+  float leftx, lefty, leftz;
+  int mapx, mapy;
+
+  leftx = eyeX+cos(leftRightHeadAngle-90)*200;
+  leftz = eyeZ+sin(leftRightHeadAngle-90)*200;
+  lefty = eyeY;
+
+  mapx = int(leftx+5000)/gridSize;
+  mapy = int(leftz+5000)/gridSize;
+
+  if (map.get(mapx, mapy) == black) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+boolean canMoveRight() {
+  float rightx, righty, rightz;
+  int mapx, mapy;
+
+  rightx = eyeX+cos(leftRightHeadAngle+90)*200;
+  rightz = eyeZ+sin(leftRightHeadAngle+90)*200;
+  righty = eyeY;
+
+  mapx = int(rightx+5000)/gridSize;
+  mapy = int(rightz+5000)/gridSize;
 
   if (map.get(mapx, mapy) == black) {
     return false;
