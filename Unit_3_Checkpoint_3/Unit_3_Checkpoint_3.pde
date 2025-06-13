@@ -28,19 +28,28 @@ boolean wKey, aKey, sKey, dKey, spaceKey, shiftKey;
 float eyeX, eyeY, eyeZ, focusX, focusY, focusZ, tiltX, tiltY, tiltZ; //eye = keyboard, focus = mouse, tilt = irrelevant
 float leftRightHeadAngle, upDownHeadAngle;
 
+//Game Objects
+ArrayList<GameObject> objects;
+
 void setup() {
+  objects = new ArrayList<GameObject>(); 
+  
   fullScreen(P3D);
   textureMode(NORMAL);
   wKey = aKey = sKey = dKey = false;
+  
   eyeX = width/2;
   eyeY = -300;
   eyeZ = 0;
+  
   focusX = width/2;
   focusY = height/2;
   focusZ = 10;
+  
   tiltX = 0;
   tiltY = 1;
   tiltZ = 0;
+  
   leftRightHeadAngle = radians(90);
   noCursor();
 
@@ -62,11 +71,30 @@ void setup() {
 
 void draw() {
   background(0);
-  pointLight(255, 255, 255, eyeX, eyeY, eyeZ);
+  lightChange(255, 255, 255); 
   camera(eyeX, eyeY, eyeZ, focusX, focusY, focusZ, tiltX, tiltY, tiltZ);
   drawFocalPoint();
   controlCamera();
   drawMap();
+  
+  int i = 0; 
+  while (i < objects.size()) {
+    GameObject obj = objects.get(i); 
+    obj.act(); 
+    obj.show(); 
+    if (obj.lives == 0) {
+     objects.remove(i);  
+    } else { 
+      i++; 
+    }
+  }
+}
+
+void lightChange(float r, float g, float b) {
+    int colorTimer = 1000;
+    pointLight(r, g, b, eyeX, eyeY, eyeZ);
+    map( //fix lighting pattern
+    
 }
 
 void drawMap() {
@@ -74,7 +102,7 @@ void drawMap() {
     for (int y = 0; y < map.height; y++) {
       color c = map.get(x, y);
 
-      if (c != white && c != black) {
+      if (c == red) {
         for (int i = 1; i < 3; i++) {
           texturedCube(x*gridSize-5000, -gridSize*i, y*gridSize-5000, stoneBrick, gridSize);
         }
